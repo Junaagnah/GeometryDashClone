@@ -19,7 +19,11 @@ public class FollowPlayer : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        cameraPosition = new Vector3(Player.transform.position.x + initialOffset.x, Player.transform.position.y + initialOffset.y, initialOffset.z);
-        transform.position = Vector3.Lerp(transform.position, cameraPosition, smoothness * Time.fixedDeltaTime);
+        // If player is dead we stop following him
+        if (Player != null)
+        {
+            cameraPosition = new Vector3(Player.transform.position.x + initialOffset.x, Player.transform.position.y + initialOffset.y, initialOffset.z);
+            transform.position = Vector3.Lerp(transform.position, cameraPosition, smoothness * Time.fixedDeltaTime);
+        }
     }
 }

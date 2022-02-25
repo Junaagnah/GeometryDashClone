@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public ParticleSystem Explosion;
+
     [SerializeField]
     private int speed = 15;
     private float jumpAmount = 25;
@@ -11,6 +13,7 @@ public class Player : MonoBehaviour
     private float gravityScale = 10;
 
     private bool canJump = false;
+    private bool shouldMove = true;
     private bool hasTouchedGround = false; // Prevents the player from moving before init
     private int nbJumps = 0; // Double jump
 
@@ -26,13 +29,13 @@ public class Player : MonoBehaviour
     void Update()
     {
         // Auto movement
-        if (hasTouchedGround)
+        if (hasTouchedGround && shouldMove)
         {
             transform.position += speed * Time.deltaTime * Vector3.right;
         }
 
         // Jump
-        if ((canJump || nbJumps < 2) && Input.GetKeyDown(KeyCode.Space))
+        if (shouldMove && (canJump || nbJumps < 2) && Input.GetKeyDown(KeyCode.Space))
         {
             nbJumps += 1;
             rb.AddForce(Vector3.up * jumpAmount, ForceMode.Impulse);
@@ -68,6 +71,10 @@ public class Player : MonoBehaviour
 
     public void KillPlayer()
     {
-        gameObject.SetActive(false);
+        shouldMove = false;
+        Instantiate(Explosion, gameObject.transform.position, Quaternion.identity);
+        
+        Explosion.Play();
+        Destroy(gameObject);
     }
 }
