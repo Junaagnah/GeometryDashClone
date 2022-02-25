@@ -20,9 +20,8 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         Player = GameObject.FindGameObjectWithTag("Player");
+
         // Stopping player movement
-        //Player.GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
-        //Player.GetComponent<Rigidbody>().isKinematic = true;
         Player.GetComponent<Player>().gamePaused = true;
 
         GameOver.enabled = false;
@@ -67,7 +66,6 @@ public class GameManager : MonoBehaviour
 
     private void CountDown()
     {
-        //Player.GetComponent<Player>().shouldMove = false;
         // Countdown starts at 2 secondes after the scene is loaded
         if (elapsedTime >= 1.0f && elapsedTime < 2.0f)
         {
@@ -83,8 +81,6 @@ public class GameManager : MonoBehaviour
         {
             StartingCount.transform.GetChild(2).GetComponent<Text>().enabled = false;
             // Starting player movement
-            //Player.GetComponent<Rigidbody>().isKinematic = false;
-            //Player.GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.Continuous;
             Player.GetComponent<Player>().gamePaused = false;
             gameStarted = true;
         }
