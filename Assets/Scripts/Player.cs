@@ -13,8 +13,7 @@ public class Player : MonoBehaviour
     private float gravityScale = 10;
 
     private bool canJump = false;
-    private bool shouldMove = true;
-    private bool hasTouchedGround = false; // Prevents the player from moving before init
+    private bool shouldMove = false;
     private int nbJumps = 0; // Double jump
 
     private Rigidbody rb;
@@ -28,17 +27,23 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Auto movement
-        if (hasTouchedGround && shouldMove)
+        if (shouldMove)
         {
+            // Auto movement
             transform.position += speed * Time.deltaTime * Vector3.right;
+
+            // Jump
+            if ((canJump || nbJumps < 2) && Input.GetKeyDown(KeyCode.Space))
+            {
+                nbJumps += 1;
+                rb.AddForce(Vector3.up * jumpAmount, ForceMode.Impulse);
+            }
         }
 
-        // Jump
-        if (shouldMove && (canJump || nbJumps < 2) && Input.GetKeyDown(KeyCode.Space))
+        // Check player death
+        if (gameObject.transform.position.y < 0)
         {
-            nbJumps += 1;
-            rb.AddForce(Vector3.up * jumpAmount, ForceMode.Impulse);
+            KillPlayer();
         }
     }
 
@@ -50,18 +55,11 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Check if collision on ground (is dead)
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            KillPlayer();
-        } else
-        {
-            if (!hasTouchedGround) hasTouchedGround = true; // Avoid resetting the value each time there is a collision
+        if (!shouldMove) shouldMove = true; // Avoid resetting the value each time there is a collision
 
-            rb.velocity = Vector3.zero;
-            canJump = true;
-            nbJumps = 0;
-        }
+        rb.velocity = Vector3.zero;
+        canJump = true;
+        nbJumps = 0;
     }
 
     private void OnCollisionExit(Collision collision)
