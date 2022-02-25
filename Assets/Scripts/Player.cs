@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public ParticleSystem Explosion;
+    public bool gamePaused = false;
 
     [SerializeField]
     private int speed = 15;
@@ -13,7 +14,6 @@ public class Player : MonoBehaviour
     private float gravityScale = 10;
 
     private bool canJump = false;
-    private bool shouldMove = false;
     private int nbJumps = 0; // Double jump
 
     private Rigidbody rb;
@@ -27,7 +27,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (shouldMove)
+        if (!gamePaused)
         {
             // Auto movement
             transform.position += speed * Time.deltaTime * Vector3.right;
@@ -55,8 +55,6 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!shouldMove) shouldMove = true; // Avoid resetting the value each time there is a collision
-
         rb.velocity = Vector3.zero;
         canJump = true;
         nbJumps = 0;
@@ -69,7 +67,6 @@ public class Player : MonoBehaviour
 
     public void KillPlayer()
     {
-        shouldMove = false;
         Instantiate(Explosion, gameObject.transform.position, Quaternion.identity);
         
         Explosion.Play();
